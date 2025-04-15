@@ -2,8 +2,15 @@
 
 import { ArrowRight, TreePine } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const CTASection = () => {
+  const router = useRouter();
+  
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('/sign-in');
+  };
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -20,7 +27,7 @@ const CTASection = () => {
                 technology to predict, detect, and prevent devastating wildfires.
               </p>
               
-              <form className="space-y-4 mb-8">
+              <form className="space-y-4 mb-8" onSubmit={handleSignIn}>
                 <div>
                   <input 
                     type="text" 
@@ -45,8 +52,8 @@ const CTASection = () => {
                     <option value="other" className="text-gray-800">Other</option>
                   </select>
                 </div>
-                <Button className="w-full bg-white text-wildfire-red hover:bg-white/90 p-6 text-lg font-semibold rounded-xl flex items-center justify-center">
-                  Request Demo <ArrowRight className="ml-2 h-5 w-5" />
+                <Button type="submit" className="w-full bg-white text-wildfire-red hover:bg-white/90 p-6 text-lg font-semibold rounded-xl flex items-center justify-center">
+                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </form>
               

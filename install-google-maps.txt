@@ -1,0 +1,9 @@
+Run the following commands to install Google Maps and update package.json:
+
+# Install the Google Maps package
+npm install @react-google-maps/api
+
+# If you still need Clerk for authentication
+npm install @clerk/nextjs
+
+# These commands will update your package.json with the new dependencies

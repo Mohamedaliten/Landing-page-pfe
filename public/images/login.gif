@@ -1,0 +1,23 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .flame { fill: #FF6B00; }
+    .smoke { fill: #CCCCCC; }
+    .text { fill: #333333; font-family: Arial, sans-serif; font-size: 24px; text-anchor: middle; }
+    @keyframes flicker {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+    .animate-flicker {
+      animation: flicker 1.5s infinite;
+    }
+  </style>
+  <rect width="500" height="500" fill="white"/>
+  <g transform="translate(250, 200)">
+    <path class="flame animate-flicker" d="M0,-80 C30,-70 40,-40 30,-10 C70,-40 70,-10 50,20 C90,-10 90,30 70,60 C110,30 90,90 50,100 C60,110 20,110 0,100 C-20,110 -60,110 -50,100 C-90,90 -110,30 -70,60 C-90,30 -90,-10 -50,20 C-70,-10 -70,-40 -30,-10 C-40,-40 -30,-70 0,-80 Z" />
+    <path class="smoke" d="M-70,-90 C-60,-100 -50,-90 -50,-80 C-40,-90 -30,-100 -20,-90 C-10,-80 -20,-70 -30,-70 C-40,-70 -50,-80 -60,-70 C-70,-80 -70,-90 -70,-90 Z" />
+    <path class="smoke" transform="translate(90, -20)" d="M-70,-90 C-60,-100 -50,-90 -50,-80 C-40,-90 -30,-100 -20,-90 C-10,-80 -20,-70 -30,-70 C-40,-70 -50,-80 -60,-70 C-70,-80 -70,-90 -70,-90 Z" />
+  </g>
+  <text x="250" y="350" class="text">Login Placeholder</text>
+  <text x="250" y="380" class="text" style="font-size: 16px;">Animation for demonstration purposes</text>
+</svg>

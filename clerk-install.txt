@@ -1,0 +1,5 @@
+// Run these commands to install Clerk:
+
+npm install @clerk/nextjs
+
+// After installation, you need to modify package.json to include @clerk/nextjs in the dependencies.

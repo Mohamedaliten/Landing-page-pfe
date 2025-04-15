@@ -1,14 +1,14 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import FeaturesSection from "@/components/FeaturesSection";
-import HowItWorksSection from "@/components/HowItWorksSection";
-import BenefitsSection from "@/components/BenefitsSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
-import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
-import FireAnimation from "@/components/FireAnimation";
+import Navbar from "@/src/components/Navbar";
+import HeroSection from "@/src/components/HeroSection";
+import FeaturesSection from "@/src/components/FeaturesSection";
+import HowItWorksSection from "@/src/components/HowItWorksSection";
+import BenefitsSection from "@/src/components/BenefitsSection";
+import TestimonialsSection from "@/src/components/TestimonialsSection";
+import CTASection from "@/src/components/CTASection";
+import Footer from "@/src/components/Footer";
+import FireAnimation from "@/src/components/FireAnimation";
 import { useEffect } from "react";
 
 export default function Home() {

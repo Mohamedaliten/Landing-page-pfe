@@ -1,0 +1,6 @@
+// Run these commands to install the required dependencies:
+
+npm install leaflet @types/leaflet
+npm install @clerk/nextjs
+
+// After installation, update package.json to include these dependencies

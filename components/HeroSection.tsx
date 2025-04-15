@@ -2,8 +2,14 @@
 
 import { AlertTriangle, TreePine, Map, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
+  const router = useRouter();
+  
+  const handleGetStarted = () => {
+    router.push('/sign-in');
+  };
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-20">
       {/* Background gradient and overlay */}
@@ -46,8 +52,12 @@ const HeroSection = () => {
             Our AI-powered early warning system detects wildfires up to 24 hours before conventional methods, helping save forests, wildlife, and communities.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="bg-wildfire-red hover:bg-wildfire-orange text-white px-8 py-6 text-lg rounded-full hover-lift">
-              Get Early Access
+            <Button 
+              size="lg" 
+              className="bg-wildfire-red hover:bg-wildfire-orange text-white px-8 py-6 text-lg rounded-full hover-lift"
+              onClick={handleGetStarted}
+            >
+              Get Started
             </Button>
             <Button variant="outline" size="lg" className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 px-8 py-6 text-lg rounded-full">
               See How It Works
