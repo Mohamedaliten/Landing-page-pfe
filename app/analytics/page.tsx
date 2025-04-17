@@ -1,13 +1,8 @@
 "use client";
 
-import { ChevronLeft, ChevronDown, Check, Flame } from "lucide-react";
+import { ChevronLeft, ChevronDown, Check } from "lucide-react";
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-
-// Utility function for conditionally joining classNames
-function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(" ");
-}
 
 // Custom Button component
 const Button = React.forwardRef<
@@ -17,22 +12,38 @@ const Button = React.forwardRef<
     size?: "default" | "sm" | "lg" | "icon";
   }
 >(({ className, variant = "default", size = "default", ...props }, ref) => {
+  let variantClass = "";
+  if (variant === "default") {
+    variantClass = "bg-primary text-primary-foreground shadow hover:bg-primary/90";
+  } else if (variant === "outline") {
+    variantClass = "border border-input bg-background hover:bg-accent hover:text-accent-foreground";
+  } else if (variant === "ghost") {
+    variantClass = "hover:bg-accent hover:text-accent-foreground";
+  } else {
+    variantClass = "text-primary underline-offset-4 hover:underline";
+  }
+
+  let sizeClass = "";
+  if (size === "default") {
+    sizeClass = "h-9 px-4 py-2";
+  } else if (size === "sm") {
+    sizeClass = "h-8 rounded-md px-3 text-xs";
+  } else if (size === "lg") {
+    sizeClass = "h-10 rounded-md px-8";
+  } else {
+    sizeClass = "h-9 w-9";
+  }
+
+  const buttonClasses = [
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+    variantClass,
+    sizeClass,
+    className || ""
+  ].filter(Boolean).join(" ");
+
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-        {
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90": variant === "default",
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground": variant === "outline",
-          "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
-          "text-primary underline-offset-4 hover:underline": variant === "link",
-          "h-9 px-4 py-2": size === "default",
-          "h-8 rounded-md px-3 text-xs": size === "sm",
-          "h-10 rounded-md px-8": size === "lg",
-          "h-9 w-9": size === "icon",
-        },
-        className
-      )}
+      className={buttonClasses}
       ref={ref}
       {...props}
     />
@@ -47,19 +58,23 @@ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <DropdownMenuPrimitive.Portal>
-    <DropdownMenuPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 min-w-[10rem] overflow-hidden rounded-md border bg-white shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        className
-      )}
-      {...props}
-    />
-  </DropdownMenuPrimitive.Portal>
-));
+>(({ className, sideOffset = 4, ...props }, ref) => {
+  const contentClasses = [
+    "z-50 min-w-[10rem] overflow-hidden rounded-md border bg-white shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    className || ""
+  ].filter(Boolean).join(" ");
+
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.Content
+        ref={ref}
+        sideOffset={sideOffset}
+        className={contentClasses}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
+  );
+});
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
 const DropdownMenuItem = React.forwardRef<
@@ -68,18 +83,22 @@ const DropdownMenuItem = React.forwardRef<
     inset?: boolean;
     active?: boolean;
   }
->(({ className, inset, active, ...props }, ref) => (
-  <DropdownMenuPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-gray-100 focus:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      inset && "pl-8",
-      active && "bg-gray-100 text-gray-900",
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, inset, active, ...props }, ref) => {
+  const itemClasses = [
+    "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-gray-100 focus:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    inset ? "pl-8" : "",
+    active ? "bg-gray-100 text-gray-900" : "",
+    className || ""
+  ].filter(Boolean).join(" ");
+
+  return (
+    <DropdownMenuPrimitive.Item
+      ref={ref}
+      className={itemClasses}
+      {...props}
+    />
+  );
+});
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
 interface Sensor {
@@ -102,7 +121,8 @@ interface AnalyticsTableProps {
   onFilterChange?: (filter: string) => void;
 }
 
-export function AnalyticsTable({ sensors = [], title = "Analytics", onBack, onFilterChange }: AnalyticsTableProps) {
+// Component for the analytics table
+function AnalyticsTable({ sensors = [], title = "Analytics", onBack, onFilterChange }: AnalyticsTableProps) {
   // Default data if none provided
   const defaultSensors: Sensor[] = [
     {
@@ -217,7 +237,7 @@ export function AnalyticsTable({ sensors = [], title = "Analytics", onBack, onFi
                   <td className="px-4 py-4 font-medium">{sensor.name}</td>
                   <td className="px-4 py-4">
                     <span
-                      className={`${Number.parseInt(sensor.firePercentage) > 60 ? "text-red-600" : Number.parseInt(sensor.firePercentage) > 40 ? "text-orange-500" : "text-green-500"}`}
+                      className={Number.parseInt(sensor.firePercentage) > 60 ? "text-red-600" : Number.parseInt(sensor.firePercentage) > 40 ? "text-orange-500" : "text-green-500"}
                     >
                       {sensor.firePercentage}
                     </span>
@@ -245,4 +265,12 @@ export function AnalyticsTable({ sensors = [], title = "Analytics", onBack, onFi
   );
 }
 
-export default AnalyticsTable;
+// Create the actual Next.js page component
+export default function AnalyticsPage() {
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-6">Wildfire Analytics Dashboard</h1>
+      <AnalyticsTable />
+    </div>
+  );
+}

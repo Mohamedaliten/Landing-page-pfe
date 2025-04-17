@@ -1,5 +1,6 @@
 
 import { Star, Quote } from "lucide-react";
+import Image from "next/image";
 
 const TestimonialsSection = () => {
   const testimonials = [
@@ -56,12 +57,14 @@ const TestimonialsSection = () => {
                 ))}
               </div>
               
-              <p className="text-gray-700 mb-6 italic">"{testimonial.quote}"</p>
+              <p className="text-gray-700 mb-6 italic">&ldquo;{testimonial.quote}&rdquo;</p>
               
               <div className="flex items-center">
-                <img 
+                <Image 
                   src={testimonial.avatar} 
                   alt={testimonial.name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full mr-4 object-cover"
                 />
                 <div>

@@ -1,0 +1,4 @@
+// Using a simplified ESLint config to avoid dependency issues
+export default {
+  extends: ["next/core-web-vitals"],
+};
