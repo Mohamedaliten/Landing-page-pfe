@@ -1,27 +1,43 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 
-export default function SSOCallbackPage() {
-  const router = useRouter();
-  
+export default function SSOCallback() {
+  const [isClientSide, setIsClientSide] = useState(false);
+  const [status, setStatus] = useState('Processing authentication...');
+
   useEffect(() => {
-    // Force redirect to dashboard after a short timeout (500ms)
-    // This ensures we don't wait for Clerk's automatic redirect which can be slow
-    const redirectTimer = setTimeout(() => {
-      router.push('/dashboard');
-    }, 500);
+    setIsClientSide(true);
     
-    return () => clearTimeout(redirectTimer);
-  }, [router]);
+    const handleCallback = async () => {
+      try {
+        const { useClerk } = await import('@clerk/nextjs');
+        const clerk = useClerk();
+        
+        if (!clerk.loaded) {
+          setStatus('Loading authentication...');
+          return;
+        }
+        
+        await clerk.handleRedirectCallback({
+          afterSignInUrl: '/dashboard',
+          afterSignUpUrl: '/dashboard',
+        });
+      } catch (error) {
+        console.error('Error handling SSO callback:', error);
+        setStatus('Authentication failed. Please try again.');
+      }
+    };
+    
+    handleCallback();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-      <Flame className="h-12 w-12 text-orange-500 mb-4 animate-pulse" />
-      <h1 className="text-2xl font-bold mb-2">Processing your authentication...</h1>
-      <p className="text-gray-500">Redirecting you to dashboard...</p>
+      <Flame className="h-12 w-12 text-orange-500 mb-6 animate-pulse" />
+      <h1 className="text-2xl font-bold mb-2">Authenticating...</h1>
+      <p className="text-gray-500">{status}</p>
     </div>
   );
 }
