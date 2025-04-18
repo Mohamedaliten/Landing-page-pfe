@@ -1,6 +1,6 @@
 // components/profile/Statistics.tsx
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '../../components/ui/card';
 import { Activity, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const Statistics = () => {

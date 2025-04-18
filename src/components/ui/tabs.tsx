@@ -6,6 +6,12 @@ interface TabsProps {
   className?: string;
 }
 
+// Define a type for the props we're passing to cloned children
+type TabsContextProps = {
+  activeTab: string;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+};
+
 export const Tabs = ({ defaultValue, children, className = '' }: TabsProps) => {
   const [activeTab, setActiveTab] = React.useState(defaultValue);
 
@@ -13,7 +19,11 @@ export const Tabs = ({ defaultValue, children, className = '' }: TabsProps) => {
     <div className={className}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child, { activeTab, setActiveTab });
+          // Use type assertion to fix the cloneElement type error
+          return React.cloneElement(child as React.ReactElement<TabsContextProps>, { 
+            activeTab, 
+            setActiveTab 
+          });
         }
         return child;
       })}
@@ -23,6 +33,8 @@ export const Tabs = ({ defaultValue, children, className = '' }: TabsProps) => {
 
 interface TabsListProps {
   children: React.ReactNode;
+  activeTab?: string;
+  setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const TabsList = ({ children }: TabsListProps) => {
@@ -37,7 +49,7 @@ interface TabsTriggerProps {
   value: string;
   children: React.ReactNode;
   activeTab?: string;
-  setActiveTab?: (value: string) => void;
+  setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const TabsTrigger = ({ value, children, activeTab, setActiveTab }: TabsTriggerProps) => {
@@ -59,9 +71,10 @@ interface TabsContentProps {
   value: string;
   children: React.ReactNode;
   activeTab?: string;
+  setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const TabsContent = ({ value, children, activeTab }: TabsContentProps) => {
+export const TabsContent = ({ value, children, activeTab, setActiveTab }: TabsContentProps) => {
   if (value !== activeTab) return null;
   return <div>{children}</div>;
 };

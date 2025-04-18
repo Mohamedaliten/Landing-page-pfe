@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Shield, Lock, Key } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Card } from '../../components/ui/card';
 
 const SecuritySettings = () => {
   return (

@@ -19,15 +19,37 @@ const HeroSection = () => {
       
       {/* Animated fire particles (decorative) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {/* Using predefined values instead of Math.random() to avoid hydration errors */}
+        {[
+          {left: 52.11, top: 79.05, delay: 1.39, duration: 7.89},
+          {left: 47.40, top: 7.07, delay: 2.86, duration: 7.93},
+          {left: 60.73, top: 30.16, delay: 4.04, duration: 10.48},
+          {left: 10.75, top: 75.37, delay: 4.60, duration: 7.09},
+          {left: 88.66, top: 61.40, delay: 4.85, duration: 11.67},
+          {left: 89.10, top: 93.92, delay: 0.14, duration: 7.07},
+          {left: 21.98, top: 5.52, delay: 4.25, duration: 9.27},
+          {left: 99.20, top: 90.03, delay: 2.28, duration: 11.22},
+          {left: 89.16, top: 85.93, delay: 2.30, duration: 7.87},
+          {left: 81.62, top: 24.27, delay: 2.40, duration: 8.15},
+          {left: 77.14, top: 69.80, delay: 0.74, duration: 7.20},
+          {left: 81.79, top: 77.92, delay: 1.30, duration: 11.34},
+          {left: 88.55, top: 50.34, delay: 4.57, duration: 7.27},
+          {left: 68.69, top: 75.22, delay: 3.59, duration: 8.52},
+          {left: 15.71, top: 22.08, delay: 3.92, duration: 10.84},
+          {left: 70.49, top: 99.81, delay: 3.44, duration: 10.92},
+          {left: 83.05, top: 50.42, delay: 1.27, duration: 11.91},
+          {left: 25.86, top: 36.54, delay: 4.53, duration: 11.32},
+          {left: 72.18, top: 76.47, delay: 2.78, duration: 11.94},
+          {left: 93.45, top: 60.38, delay: 3.68, duration: 6.42}
+        ].map((particle, i) => (
           <div 
             key={i}
             className="absolute animate-float opacity-80"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${6 + Math.random() * 6}s`
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.duration}s`
             }}
           >
             <div 
@@ -54,13 +76,12 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button 
-              size="lg" 
               className="bg-wildfire-red hover:bg-wildfire-orange text-white px-8 py-6 text-lg rounded-full hover-lift"
               onClick={handleGetStarted}
             >
               Get Started
             </Button>
-            <Button variant="outline" size="lg" className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 px-8 py-6 text-lg rounded-full">
+            <Button variant="ghost" className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 px-8 py-6 text-lg rounded-full">
               See How It Works
             </Button>
           </div>

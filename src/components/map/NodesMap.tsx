@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import MapWrapper from './MapWrapper';
-import { useNodes } from '@/hooks/useNodes';
+import { useNodes, Node } from '../../../hooks/useNodes';
 import { MapLegend } from './MapLegend';
-import { useMapKey } from '@/hooks/map/useMapKey';
+import { useMapKey } from '../../../hooks/map/useMapKey';
 
 interface NodesMapProps {
   compact?: boolean;
@@ -42,11 +42,11 @@ const NodesMap = ({ compact = false }: NodesMapProps) => {
     );
   }
 
-  // Sample data for demonstration
-  const sampleNodes = nodes.length > 0 ? nodes : [
+  // Sample data for demonstration with explicit typing
+  const sampleNodes: Node[] = nodes.length > 0 ? nodes : [
     {
       id: 1,
-      position: [33.7041, 8.9690], // Kebili, Tunisia
+      position: [33.7041, 8.9690] as [number, number], // Kebili, Tunisia
       status: 'connection',
       firePercentage: 8,
       cameraStatus: true,
@@ -58,7 +58,7 @@ const NodesMap = ({ compact = false }: NodesMapProps) => {
     },
     {
       id: 2,
-      position: [33.7141, 8.9790],
+      position: [33.7141, 8.9790] as [number, number],
       status: 'high-alert',
       firePercentage: 62,
       cameraStatus: true,
@@ -70,7 +70,7 @@ const NodesMap = ({ compact = false }: NodesMapProps) => {
     },
     {
       id: 3,
-      position: [33.6941, 8.9590],
+      position: [33.6941, 8.9590] as [number, number],
       status: 'connection',
       firePercentage: 12,
       cameraStatus: false,

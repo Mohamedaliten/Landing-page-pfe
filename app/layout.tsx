@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "../public/styles/leaflet.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/src/components/ui/sonner";
 import { TooltipProvider } from "@/src/components/ui/tooltip";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
+import ClerkProviderWithSSR from "@/src/components/auth/ClerkProviderWithSSR";
 
 export const metadata: Metadata = {
   title: "WildfireGuardian - Advanced Wildfire Detection & Prediction",
@@ -19,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ClerkProvider>
+        <ClerkProviderWithSSR>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -31,7 +33,7 @@ export default function RootLayout({
               {children}
             </TooltipProvider>
           </ThemeProvider>
-        </ClerkProvider>
+        </ClerkProviderWithSSR>
       </body>
     </html>
   );

@@ -59,13 +59,14 @@ const sampleNodes: Node[] = [
 
 interface DirectMapRendererProps {
   compact?: boolean;
+  nodes?: Node[];
 }
 
 /**
  * DirectMapRenderer - A component that directly creates a Leaflet map without React components
  * This avoids issues with map re-initialization
  */
-const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false }) => {
+const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false, nodes }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
 
@@ -78,7 +79,7 @@ const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false }
       try {
         // Dynamically import Leaflet
         const leaflet = await import('leaflet');
-        await import('leaflet/dist/leaflet.css');
+        // Using public CSS file instead of direct import
         L = leaflet.default;
         
         // Clean up any existing map
@@ -112,8 +113,8 @@ const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false }
         }).setView([33.7041, 8.9690], 13);
         
         // Set z-index for map panes to ensure they don't overlap with navbar
-        Object.values(map.getPanes()).forEach(pane => {
-          if (pane.style) {
+        Object.values(map.getPanes()).forEach((pane: any) => {
+          if (pane && pane.style) {
             pane.style.zIndex = "400"; // Lower than navbar's z-index
           }
         });
@@ -140,7 +141,8 @@ const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false }
         };
 
         // Add markers for each node
-        sampleNodes.forEach(node => {
+        const nodesToDisplay = nodes || sampleNodes;
+        nodesToDisplay.forEach(node => {
           const marker = L.marker(node.position, { 
             icon: createIcon(node.status) 
           }).addTo(map);
@@ -210,7 +212,7 @@ const DirectMapRenderer: React.FC<DirectMapRendererProps> = ({ compact = false }
         mapInstanceRef.current = null;
       }
     };
-  }, [compact]); // Only recreate map when compact prop changes
+  }, [compact, nodes]); // Added nodes as dependency
 
   return (
     <div 

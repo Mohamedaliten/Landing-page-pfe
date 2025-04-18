@@ -1,7 +1,7 @@
 'use client'; // Mark this component as a Client Component
 
 import { Bell, Mail, Phone } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Card } from '../../components/ui/card';
 
 const NotificationSettings = () => {
   return (
