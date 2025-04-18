@@ -5,7 +5,6 @@ import { Toaster } from "@/src/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/src/components/ui/sonner";
 import { TooltipProvider } from "@/src/components/ui/tooltip";
 import { ThemeProvider } from "@/src/components/theme-provider";
-import { ClerkProvider } from "@clerk/nextjs";
 import ClerkProviderWithSSR from "@/src/components/auth/ClerkProviderWithSSR";
 
 export const metadata: Metadata = {
@@ -28,9 +27,9 @@ export default function RootLayout({
             enableSystem
           >
             <TooltipProvider>
+              {children}
               <Toaster />
               <SonnerToaster />
-              {children}
             </TooltipProvider>
           </ThemeProvider>
         </ClerkProviderWithSSR>
