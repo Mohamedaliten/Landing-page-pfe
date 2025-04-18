@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// A very simple middleware that doesn't use any Clerk imports
-// to avoid Edge Function compatibility issues
+// A minimal middleware that doesn't attempt any auth checks
+// This avoids Edge Function incompatibilities
 export default function middleware(request: NextRequest) {
-  // Simply pass all requests through to avoid Edge Function issues
   return NextResponse.next();
 }
 
-// Keep the matcher minimal to avoid regex capturing group errors
-export const config = {
-  matcher: ['/dashboard/:path*'],
-};
+// No matcher means this will run on all routes
+// But since we're just passing through, it shouldn't cause any issues

@@ -16,13 +16,15 @@ export default function ClerkProviderWithSSR({
     setMounted(true);
   }, []);
 
+  // During SSR or before hydration, render children without Clerk
   if (!mounted) {
-    // Return a skeleton or loading state
+    // Return a minimal version without authentication wrapper
     return <div className="min-h-screen">{children}</div>;
   }
 
+  // Client-side render with Clerk provider
   return (
-    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+    <ClerkProvider>
       {children}
     </ClerkProvider>
   );
