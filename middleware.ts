@@ -3,13 +3,12 @@ import type { NextRequest } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 
 // Define public routes that don't require authentication
-const publicPaths = ["/", "/sign-in", "/sign-up", "/sso-callback", "/api(.*)"];
+const publicPaths = ["/", "/sign-in", "/sign-up", "/sso-callback", "/api"];
 
 function isPublic(path: string) {
   return publicPaths.some(publicPath => {
-    if (publicPath.includes("(.*)")) {
-      const pathWithoutWildcard = publicPath.replace("(.*)", "");
-      return path.startsWith(pathWithoutWildcard);
+    if (publicPath === "/api" && path.startsWith("/api")) {
+      return true;
     }
     return path === publicPath;
   });
@@ -37,8 +36,6 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclude files with extensions and static resources
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(svg|jpg|jpeg|png|gif|js|css|woff|woff2)).*)",
-    "/"
+    '/:path*',
   ],
 };
