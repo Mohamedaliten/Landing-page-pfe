@@ -6,9 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Flame, Eye, EyeOff } from 'lucide-react';
 
-// Import types only
-import type { SignInResource } from '@clerk/types';
-
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -16,56 +13,48 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
-  // For clerk state
-  const [clerkLoaded, setClerkLoaded] = useState(false);
-  const [clerk, setClerk] = useState<any>(null);
-  const [signInResource, setSignInResource] = useState<SignInResource | null>(null);
-  
-  // Load Clerk only on client side
+  // Only initialize on client-side
   useEffect(() => {
-    const loadClerk = async () => {
-      try {
-        const clerk = await import('@clerk/clerk-js');
-        const { SignIn } = await import('@clerk/nextjs');
-        setClerk(clerk);
-        setClerkLoaded(true);
-      } catch (error) {
-        console.error('Error loading Clerk:', error);
-      }
-    };
-    
-    loadClerk();
+    setMounted(true);
   }, []);
+  
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Flame className="h-12 w-12 text-orange-500 animate-pulse" />
+      </div>
+    );
+  }
   
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!clerkLoaded) return;
-    
     try {
       setIsLoading(true);
       setErrorMessage('');
 
-      // Get the client from the window object
-      const client = (window as any).__clerk_client;
-      if (!client) {
+      // Dynamic import so this only runs on client side
+      const { useSignIn } = await import('@clerk/nextjs');
+      const { signIn, setActive } = useSignIn();
+
+      if (!signIn) {
         setErrorMessage('Authentication not available');
         return;
       }
 
-      // Sign in using the client directly
-      const signInAttempt = await client.signIn.create({
+      const result = await signIn.create({
         identifier: email,
         password,
       });
 
-      if (signInAttempt.status === 'complete') {
-        await client.setActive({ session: signInAttempt.createdSessionId });
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
         router.push('/dashboard');
       } else {
-        console.error('Sign in failed', signInAttempt);
+        console.error('Sign in failed', result);
         setErrorMessage('Something went wrong. Please try again.');
       }
     } catch (err: any) {
@@ -78,25 +67,26 @@ export default function SignInPage() {
 
   // Handle social sign in
   const handleSocialSignIn = async (provider: 'oauth_google' | 'oauth_facebook' | 'oauth_apple') => {
-    if (!clerkLoaded) return;
-    
     try {
       setErrorMessage('');
       
-      // Get the client from the window object
-      const client = (window as any).__clerk_client;
-      if (!client) {
+      // Dynamic import so this only runs on client side
+      const { useSignIn, useAuth } = await import('@clerk/nextjs');
+      const { signIn } = useSignIn();
+      const { signOut, isSignedIn } = useAuth();
+      
+      if (!signIn) {
         setErrorMessage('Authentication not available');
         return;
       }
       
       // If already signed in, sign out first
-      if (client.session) {
-        await client.signOut();
+      if (isSignedIn) {
+        await signOut();
       }
       
       // Now proceed with social sign in
-      client.signIn.authenticateWithRedirect({
+      signIn.authenticateWithRedirect({
         strategy: provider,
         redirectUrl: `${window.location.origin}/sso-callback`,
         redirectUrlComplete: `${window.location.origin}/dashboard`
@@ -129,7 +119,6 @@ export default function SignInPage() {
             <button 
               onClick={() => handleSocialSignIn('oauth_google')}
               className="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              disabled={!clerkLoaded}
             >
               <svg className="w-5 h-5" viewBox="0 0 48 48">
                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
@@ -141,7 +130,6 @@ export default function SignInPage() {
             <button 
               onClick={() => handleSocialSignIn('oauth_facebook')}
               className="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              disabled={!clerkLoaded}
             >
               <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12.001 2C6.47813 2 2.00098 6.47715 2.00098 12C2.00098 16.9913 5.65783 21.1283 10.4385 21.8785V14.8906H7.89941V12H10.4385V9.79688C10.4385 7.29063 11.9314 5.90625 14.2156 5.90625C15.3097 5.90625 16.4541 6.10156 16.4541 6.10156V8.5625H15.1931C13.9509 8.5625 13.5635 9.33334 13.5635 10.1242V12H16.3369L15.8936 14.8906H13.5635V21.8785C18.3441 21.1283 22.001 16.9913 22.001 12C22.001 6.47715 17.5238 2 12.001 2Z"/>
@@ -214,7 +202,7 @@ export default function SignInPage() {
             
             <button
               type="submit"
-              disabled={isLoading || !clerkLoaded}
+              disabled={isLoading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg font-medium transition flex items-center justify-center"
             >
               {isLoading ? (

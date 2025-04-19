@@ -2,10 +2,17 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Flame, Map, Home, BarChart3, Settings } from 'lucide-react';
+import { Flame, Map, Home, BarChart3, Settings, User } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
 
 export default function MainNav() {
+  const [mounted, setMounted] = useState(false);
+  
+  // Only show auth components after mounting to prevent hydration errors
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const pathname = usePathname();
   
   const isActive = (path: string): boolean => {
@@ -59,7 +66,13 @@ export default function MainNav() {
           
           {/* User Profile */}
           <div className="flex items-center gap-4">
-            <UserButton afterSignOutUrl="/" />
+            {mounted ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
+            )}
           </div>
         </div>
       </div>

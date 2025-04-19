@@ -1,11 +1,16 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-
-// A minimal middleware that doesn't attempt any auth checks
-// This avoids Edge Function incompatibilities
-export default function middleware(request: NextRequest) {
-  return NextResponse.next();
-}
-
-// No matcher means this will run on all routes
-// But since we're just passing through, it shouldn't cause any issues
+import { authMiddleware } from "@clerk/nextjs";
+ 
+export default authMiddleware({
+  // Routes that can be accessed while signed out
+  publicRoutes: ["/", "/sign-in", "/sign-up", "/api/webhook"],
+  
+  // Routes that can always be accessed, and have
+  // no authentication information
+  ignoredRoutes: ["/api/public"],
+});
+ 
+export const config = {
+  // Protects all routes, including api/trpc.
+  // See https://clerk.com/docs/nextjs/middleware for more information
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+};

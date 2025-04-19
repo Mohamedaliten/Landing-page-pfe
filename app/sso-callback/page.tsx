@@ -4,65 +4,52 @@ import { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function SSOCallback() {
-  const [status, setStatus] = useState('Processing authentication...');
-  const [clerkLoaded, setClerkLoaded] = useState(false);
+export default function SSOCallbackPage() {
   const router = useRouter();
+  const [status, setStatus] = useState('Processing authentication...');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Initialize handling only on client side
-    const initClerk = async () => {
+    setMounted(true);
+    
+    // Handle callback when component mounts
+    const processAuth = async () => {
       try {
         setStatus('Initializing authentication...');
         
-        // Wait for Clerk to be available on window
-        const waitForClerk = () => {
-          if ((window as any).__clerk_client) {
-            handleCallback();
-            return;
-          }
-          
-          setTimeout(waitForClerk, 100);
-        };
+        // Dynamic import so this only runs on client side
+        const { useClerk } = await import('@clerk/nextjs');
+        const clerk = useClerk();
         
-        const handleCallback = async () => {
-          try {
-            const client = (window as any).__clerk_client;
-            
-            if (!client) {
-              setStatus('Authentication client not available');
-              return;
-            }
-            
-            setClerkLoaded(true);
-            
-            // Handle the callback
-            await client.handleRedirectCallback({
-              afterSignInUrl: '/dashboard',
-              afterSignUpUrl: '/dashboard',
-            });
-            
-            // Redirect is handled by Clerk
-          } catch (error) {
-            console.error('Error handling callback:', error);
-            setStatus('Authentication failed. Redirecting to sign in...');
-            
-            // Redirect to sign-in after delay
-            setTimeout(() => {
-              router.push('/sign-in');
-            }, 2000);
-          }
-        };
+        if (!clerk || !clerk.loaded) {
+          setStatus('Authentication system is loading...');
+          return;
+        }
         
-        waitForClerk();
+        // Handle the callback
+        await clerk.handleRedirectCallback({
+          afterSignInUrl: '/dashboard',
+          afterSignUpUrl: '/dashboard',
+        });
+        
+        // If we reach here, it means the redirection didn't happen
+        // So we should redirect manually
+        router.push('/dashboard');
       } catch (error) {
-        console.error('Failed to initialize clerk:', error);
-        setStatus('Authentication system unavailable');
+        console.error('Error handling callback:', error);
+        setStatus('Authentication failed. Redirecting to sign in...');
+        
+        // Redirect to sign-in after delay
+        setTimeout(() => {
+          router.push('/sign-in');
+        }, 2000);
       }
     };
     
-    initClerk();
-  }, [router]);
+    if (mounted) {
+      processAuth();
+    }
+  }, [router, mounted]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">

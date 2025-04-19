@@ -2,6 +2,7 @@
  
 import { useEffect } from 'react';
 import { Flame } from 'lucide-react';
+import Link from 'next/link';
  
 export default function GlobalError({
   error,
@@ -30,12 +31,12 @@ export default function GlobalError({
           >
             Try again
           </button>
-          <a 
+          <Link 
             href="/"
             className="mt-4 text-orange-500 hover:underline"
           >
             Return to home page
-          </a>
+          </Link>
         </div>
       </body>
     </html>
